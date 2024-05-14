@@ -1,3 +1,4 @@
+import MobileNav from "@/components/mobile-nav";
 import Sidebar from "@/components/sidebar";
 import Image from "next/image";
 
@@ -20,12 +21,14 @@ export default function RootLayout({
             src='/icons/logo.svg' 
             width={40}
             height={40}
-            alt="manu icon"
+            alt="logo "
           />
+          <div>
+            <MobileNav user={loggedIn} />
+          </div>
         </div>
-      </div>
-
         {children}
+      </div>
     </main>
   );
 }
