@@ -1,7 +1,7 @@
 "use client"
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -13,9 +13,23 @@ import {
 import CustomFormField from './custom-form-field'
 import { authFormSchema } from '@/lib/utils'
 import { Loader } from 'lucide-react'
+import { useRouter } from 'next/navigation'; 
+import { signUp, signIn } from '@/lib/server/actions/user.actions'
+
+import { UserContext } from '../context/user.context'
 
 
 function AuthForm({ type }: AuthFormProps) {
+
+  const router = useRouter();
+
+//   const { currentUser } = useContext(UserContext);  
+
+//   useEffect(()=>{
+//    if(currentUser) router.push('/')
+//   },[currentUser]);
+
+  
 
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,14 +46,32 @@ function AuthForm({ type }: AuthFormProps) {
     })
    
     // 2. Define a submit handler.
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
+    const onSubmit = async (data: z.infer<typeof formSchema>) => {
       // Do something with the form values.
       // ✅ This will be type-safe and validated.
-      setIsLoading(true);
-      setTimeout(() => {
-        console.log(values);
-        setIsLoading(false);
-      }, 1000);
+      try {
+        setIsLoading(true)
+        // sign up with appwrite and create a plaid token
+        if(type === 'sign-up'){
+            const newUser = await signUp(data);
+
+            setUser(newUser)
+        }
+
+        if(type === 'sign-in'){
+            const response = await signIn({
+                email: data.email,
+                password: data.password
+            })
+            console.log(response)
+            router.push('/')
+        }
+
+      } catch (error) {
+        console.log(error)
+      }finally{
+        setIsLoading(false)
+      }
     }
 
   return (
