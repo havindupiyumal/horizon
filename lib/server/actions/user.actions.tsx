@@ -66,7 +66,7 @@ export const signIn = async (data: signInProps) => {
 
 }
 
-export async function getLoggedInUser() {
+export const getLoggedInUser  = async () => {
     try {
       const { account } = await createSessionClient();
       return await account.get();
@@ -75,7 +75,7 @@ export async function getLoggedInUser() {
     }
   }
 
-  export async function signOut() {
+export const signOut = async () => {
   try {
     const { account } = await createSessionClient();
   
